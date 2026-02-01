@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 
 # Title of the app
-st.title("Researcher Profile Page with STEM Data")
+st.title("Human Language Technologist Profile Page")
 
 # Collect basic information
-name = "Dr. Jane Doe"
-field = "Astrophysics"
-institution = "University of Science"
+name = "Remo Motsuenyane"
+field = "Human Language Technology"
+institution = "North-West University"
 
 # Display basic profile information
 st.header("Researcher Overview")
@@ -17,8 +17,8 @@ st.write(f"**Field of Research:** {field}")
 st.write(f"**Institution:** {institution}")
 
 st.image(
-    "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
-    caption="Nature (Pixabay)"
+    "https://i.pinimg.com/736x/c9/a5/df/c9a5dfe5dca850387fb97c83e3f2c22c.jpg",
+    caption="Polygot (Pinterest)"
 )
 
 # Add a section for publications
@@ -50,71 +50,63 @@ if uploaded_file:
         st.write("The CSV does not have a 'Year' column to visualize trends.")
 
 # Add STEM Data Section
-st.header("Explore STEM Data")
+st.header("Explore South African Language Data")
 
-# Generate dummy data
-physics_data = pd.DataFrame({
-    "Experiment": ["Alpha Decay", "Beta Decay", "Gamma Ray Analysis", "Quark Study", "Higgs Boson"],
-    "Energy (MeV)": [4.2, 1.5, 2.9, 3.4, 7.1],
-    "Date": pd.date_range(start="2024-01-01", periods=5),
-})
+# Generate dummy data = zulu, tswana, venda
+zulu_data = pd.read_csv("zulu_data.csv", encoding="utf-8", nrows=20, usecols=["text","lemma", "pos", "upos"])
+tswana_data = pd.read_csv("tswana_data.csv", encoding="utf-8", nrows=20, usecols=["text","lemma", "pos", "upos"])
+venda_data = pd.read_csv("venda_data.csv", encoding="utf-8", nrows=20, usecols=["text","lemma", "pos", "upos"])
 
-astronomy_data = pd.DataFrame({
-    "Celestial Object": ["Mars", "Venus", "Jupiter", "Saturn", "Moon"],
-    "Brightness (Magnitude)": [-2.0, -4.6, -1.8, 0.2, -12.7],
-    "Observation Date": pd.date_range(start="2024-01-01", periods=5),
-})
-
-weather_data = pd.DataFrame({
-    "City": ["Cape Town", "London", "New York", "Tokyo", "Sydney"],
-    "Temperature (°C)": [25, 10, -3, 15, 30],
-    "Humidity (%)": [65, 70, 55, 80, 50],
-    "Recorded Date": pd.date_range(start="2024-01-01", periods=5),
-})
-
-# Tabbed view for STEM data
-st.subheader("STEM Data Viewer")
+# Tabbed view for language data
+st.subheader("SA Language Data Viewer")
 data_option = st.selectbox(
     "Choose a dataset to explore", 
-    ["Physics Experiments", "Astronomy Observations", "Weather Data"]
+    ["isiZulu Data", "Setswana Data", "Tshivenda Data"]
 )
 
-if data_option == "Physics Experiments":
-    st.write("### Physics Experiment Data")
-    st.dataframe(physics_data)
-    # Add widget to filter by Energy levels
-    energy_filter = st.slider("Filter by Energy (MeV)", 0.0, 10.0, (0.0, 10.0))
-    filtered_physics = physics_data[
-        physics_data["Energy (MeV)"].between(energy_filter[0], energy_filter[1])
-    ]
-    st.write(f"Filtered Results for Energy Range {energy_filter}:")
-    st.dataframe(filtered_physics)
+if data_option == "isiZulu Data":
+    st.write("### isiZulu Linguistic Data")
+    st.dataframe(zulu_data)
+    # Add widget to filter by UPOS columns
+    upos_list = zulu_data["upos"].unique().tolist()
+    selected_upos = st.multiselect(
+        "Select UPOS Tags to view:", 
+        options=upos_list, 
+        default=upos_list
+    )
+    filtered_df = zulu_data[zulu_data["upos"].isin(selected_upos)]
+    st.write(f"Displaying {len(filtered_df)} tokens matching selected tags.")
+    st.dataframe(filtered_df)
+    
+elif data_option == "Setswana Data":
+    st.write("### Setswana Linguistic Data")
+    st.dataframe(tswana_data)
+    # Add widget to filter by UPOS columns
+    upos_list = tswana_data["upos"].unique().tolist()
+    selected_upos = st.multiselect(
+        "Select UPOS Tags to view:", 
+        options=upos_list, 
+        default=upos_list
+    )
+    filtered_df = tswana_data[tswana_data["upos"].isin(selected_upos)]
+    st.write(f"Displaying {len(filtered_df)} tokens matching selected tags.")
+    st.dataframe(filtered_df)
 
-elif data_option == "Astronomy Observations":
-    st.write("### Astronomy Observation Data")
-    st.dataframe(astronomy_data)
-    # Add widget to filter by Brightness
-    brightness_filter = st.slider("Filter by Brightness (Magnitude)", -15.0, 5.0, (-15.0, 5.0))
-    filtered_astronomy = astronomy_data[
-        astronomy_data["Brightness (Magnitude)"].between(brightness_filter[0], brightness_filter[1])
-    ]
-    st.write(f"Filtered Results for Brightness Range {brightness_filter}:")
-    st.dataframe(filtered_astronomy)
-
-elif data_option == "Weather Data":
-    st.write("### Weather Data")
-    st.dataframe(weather_data)
-    # Add widgets to filter by temperature and humidity
-    temp_filter = st.slider("Filter by Temperature (°C)", -10.0, 40.0, (-10.0, 40.0))
-    humidity_filter = st.slider("Filter by Humidity (%)", 0, 100, (0, 100))
-    filtered_weather = weather_data[
-        weather_data["Temperature (°C)"].between(temp_filter[0], temp_filter[1]) &
-        weather_data["Humidity (%)"].between(humidity_filter[0], humidity_filter[1])
-    ]
-    st.write(f"Filtered Results for Temperature {temp_filter} and Humidity {humidity_filter}:")
-    st.dataframe(filtered_weather)
+elif data_option == "Tshivenda Data":
+    st.write("### Tshivenda Linguistic Data")
+    st.dataframe(venda_data)
+    # Add widget to filter by UPOS columns
+    upos_list = venda_data["upos"].unique().tolist()
+    selected_upos = st.multiselect(
+        "Select UPOS Tags to view:", 
+        options=upos_list, 
+        default=upos_list
+    )
+    filtered_df = venda_data[venda_data["upos"].isin(selected_upos)]
+    st.write(f"Displaying {len(filtered_df)} tokens matching selected tags.")
+    st.dataframe(filtered_df)
 
 # Add a contact section
 st.header("Contact Information")
-email = "jane.doe@example.com"
+email = "rkmotsuenyane@gmail.com"
 st.write(f"You can reach {name} at {email}.")
